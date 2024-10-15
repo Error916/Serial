@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
 
-    printf("Hello World!\n");
+    printf("%ld\n", sizeof(CLOCAL));
 
     return 0;
 }
