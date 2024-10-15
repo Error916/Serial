@@ -35,7 +35,7 @@ serial_t* serial_new(const char* name, uint8_t quiet) {
     s->_vquit = s->options.c_cc[VQUIT];
     s->_vsusp = s->options.c_cc[VSUSP];
     s->_vstart = s->options.c_cc[VSTART];
-    s->_vsto = s->options.c_cc[VSTO];
+    s->_vstop = s->options.c_cc[VSTOP];
     s->_vmin = s->options.c_cc[VMIN];
     s->_vtime = s->options.c_cc[VTIME];
 
@@ -91,7 +91,7 @@ serial_t* serial_new(const char* name, uint8_t quiet) {
     s->rconst = 0;
     s->rtot = 0;
 
-    if (can_ioctl(s)) {
+    if (serial_can_ioctl(s)) {
         perror("serial_new: Port not usable to iotcl - ");
         close(s->fd);
         free(s);
@@ -121,7 +121,7 @@ int serial_write_settings(serial_t* s) {
     s->options.c_cc[VQUIT]  = s->c_vquit;
     s->options.c_cc[VSUSP]  = s->c_vsusp;
     s->options.c_cc[VSTART] = s->c_vstart;
-    s->options.c_cc[VSTO]   = s->c_vsto;
+    s->options.c_cc[VSTOP]   = s->c_vstop;
     s->options.c_cc[VMIN]   = s->c_vmin;
     s->options.c_cc[VTIME]  = s->c_vtime;
 
@@ -140,16 +140,15 @@ ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread) {
     size_t done = 0;
     size_t count_in = 0;
     uint8_t string_in[255] = { 0 };
-    uint8_t *in2 = buf;
     size_t bufsize = 255; // VMIN max
 
     while (done < toread) {
         size_t size = toread - done;
         if (size > bufsize) size = bufsize;
-        size_t rin = 0;
-        rin |= (1 << s->fd); // vec(rin, fd, 1) = 1 TODO capire meglio
+        // size_t rin = 0;
+        // rin |= (1 << s->fd); // vec(rin, fd, 1) = 1 TODO capire meglio
         struct timeval timer = { 0 };
-        timer.tv_usec= s->RCONST + (toread * s->RTOT);
+        timer.tv_usec= s->rconst + (toread * s->rtot);
         int ready = select(s->fd, &rin, NULL, &rin, &timer);
         if (ready > 0)
             count_in = read(s->fd, string_in, size);
@@ -203,7 +202,7 @@ void serial_destroy(serial_t* s) {}
 int serial_write_settings(serial_t* s) { return 0; }
 
 ssize_t serial_write(serial_t* s, uint8_t* data, uint64_t datalen) { return 0; }
-ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread, uint8_t noblocking) { return 0; }
+ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread) { return 0; }
 
 int serial_can_baud(serial_t* s) { (void)s; return 0; }
 int serial_can_databits(serial_t* s) { (void)s; return 0; }

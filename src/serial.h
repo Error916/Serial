@@ -11,6 +11,7 @@
 #ifdef __unix__
 #include <unistd.h>  /* UNIX standard function definitions */
 #include <termios.h> /* POSIX terminal control definitions */
+#include <sys/ioctl.h>
 
 typedef struct {
     int fd;
@@ -21,34 +22,34 @@ typedef struct {
     int _lflag;
     int _oflag;
     int _ospeed;
-    int _veof;
-    int _veol;
-    int _verase;
-    int _vintr;
-    int _vkill;
-    int _vquit;
-    int _vsusp;
-    int _vstart;
-    int _vstop;
-    int _vmin;
-    int _vtime;
+    cc_t _veof;
+    cc_t _veol;
+    cc_t _verase;
+    cc_t _vintr;
+    cc_t _vkill;
+    cc_t _vquit;
+    cc_t _vsusp;
+    cc_t _vstart;
+    cc_t _vstop;
+    cc_t _vmin;
+    cc_t _vtime;
     int c_cflag;
     int c_iflag;
     int c_ispeed;
     int c_lflag;
     int c_oflag;
     int c_ospeed;
-    int c_veof;
-    int c_veol;
-    int c_verase;
-    int c_vintr;
-    int c_vkill;
-    int c_vquit;
-    int c_vsusp;
-    int c_vstart;
-    int c_vstop;
-    int c_vmin;
-    int c_vtime;
+    cc_t c_veof;
+    cc_t c_veol;
+    cc_t c_verase;
+    cc_t c_vintr;
+    cc_t c_vkill;
+    cc_t c_vquit;
+    cc_t c_vsusp;
+    cc_t c_vstart;
+    cc_t c_vstop;
+    cc_t c_vmin;
+    cc_t c_vtime;
     int iossiospeed_baud;
     int rconst;
     int rtot;
@@ -78,7 +79,7 @@ void serial_destroy(serial_t *s);
 int serial_write_settings(serial_t *s);
 
 ssize_t serial_write(serial_t *s, uint8_t *data, uint64_t datalen);
-ssize_t serial_read(serial_t *s, uint8_t *buf, uint64_t toread, uint8_t noblocking);
+ssize_t serial_read(serial_t *s, uint8_t *buf, uint64_t toread);
 
 int serial_can_baud(serial_t* s);
 int serial_can_databits(serial_t* s);
