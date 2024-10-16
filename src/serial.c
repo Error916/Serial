@@ -91,8 +91,8 @@ serial_t* serial_new(const char* name, uint8_t quiet) {
     s->rconst = 0;
     s->rtot = 0;
 
-    if (serial_can_ioctl(s)) {
-        perror("serial_new: Port not usable to iotcl - ");
+    if (!serial_can_ioctl(s)) {
+        fprintf(stderr, "serial_new: Port not usable to iotcl\n");
         close(s->fd);
         free(s);
         return NULL;
@@ -109,10 +109,10 @@ void serial_destroy(serial_t* s) {
 int serial_write_settings(serial_t* s) {
     s->options.c_cflag      = s->c_cflag;
     s->options.c_iflag      = s->c_iflag;
-    s->options.c_ispeed     = s->c_ispeed;
+    cfsetispeed(&s->options, s->c_ispeed);
     s->options.c_lflag      = s->c_lflag;
     s->options.c_oflag      = s->c_oflag;
-    s->options.c_ospeed     = s->c_ospeed;
+    cfsetospeed(&s->options, s->c_ospeed);
     s->options.c_cc[VEOF]   = s->c_veof;
     s->options.c_cc[VEOL]   = s->c_veol;
     s->options.c_cc[VERASE] = s->c_verase;
@@ -129,10 +129,9 @@ int serial_write_settings(serial_t* s) {
 }
 
 ssize_t serial_write(serial_t* s, uint8_t* data, uint64_t datalen) {
-    ssize_t n = write(s->fd, data, datalen);
-    if (n < datalen)
-        printf("write of %ld bytes failed\n", datalen);
-    return n;
+    if (data == NULL) return 0;
+    if (datalen <= 0) return 0;
+    return write(s->fd, data, datalen);
 }
 
 ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread) {
@@ -145,11 +144,15 @@ ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread) {
     while (done < toread) {
         size_t size = toread - done;
         if (size > bufsize) size = bufsize;
-        // size_t rin = 0;
-        // rin |= (1 << s->fd); // vec(rin, fd, 1) = 1 TODO capire meglio
+        fd_set rin, ein;
+        FD_ZERO(&rin);
+        FD_SET(s->fd, &rin);
+        ein = rin;
+        int nfds = s->fd + 1;
         struct timeval timer = { 0 };
         timer.tv_usec= s->rconst + (toread * s->rtot);
-        int ready = select(s->fd, &rin, NULL, &rin, &timer);
+        int ready = select(nfds, &rin, NULL, &ein, &timer);
+        printf("%d\n", ready);
         if (ready > 0)
             count_in = read(s->fd, string_in, size);
         if (count_in) {
@@ -187,8 +190,7 @@ int serial_reset_error(serial_t* s)             { (void)s; return 0; } // for co
 int serial_can_ioctl(serial_t *s) {
     int status;
     ioctl(s->fd, TIOCMGET, &status);
-    if ((status & TIOCMBIS) && (status & TIOCMBIC) && (status & TIOCM_RTS) &&
-        (((status & TIOCSDTR) && (status & TIOCCDTR)) || (status & TIOCM_DTR)))
+    if ((status & TIOCMBIS) && (status & TIOCMBIC) && (status & TIOCM_RTS) && (status & TIOCM_DTR))
         return 1;
     return 0;
 }

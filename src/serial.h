@@ -11,6 +11,9 @@
 #ifdef __unix__
 #include <unistd.h>  /* UNIX standard function definitions */
 #include <termios.h> /* POSIX terminal control definitions */
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/select.h>
 #include <sys/ioctl.h>
 
 typedef struct {
