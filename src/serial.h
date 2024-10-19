@@ -65,7 +65,11 @@ typedef struct {
 #include <windows.h>
 
 typedef struct {
-    HANDLE device;
+    HANDLE port;
+    COMMTIMEOUTS _timeouts;
+    DCB _state;
+    COMMTIMEOUTS timeouts;
+    DCB state;
     char name[256]; // should be the path lenght limit
 } serial_t;
 
@@ -76,13 +80,13 @@ typedef long long int ssize_t;
 // https://metacpan.org/dist/Device-SerialPort/source/SerialPort.pm
 // https://www.pololu.com/docs/0J73/15.6
 
-serial_t* serial_new(const char *name, uint8_t quiet);
-void serial_destroy(serial_t *s);
+serial_t* serial_new(const char* name, uint8_t quiet);
+void serial_destroy(serial_t* s);
 
-int serial_write_settings(serial_t *s);
+int serial_write_settings(serial_t* s);
 
-ssize_t serial_write(serial_t *s, uint8_t *data, uint64_t datalen);
-ssize_t serial_read(serial_t *s, uint8_t *buf, uint64_t toread);
+ssize_t serial_write(serial_t* s, uint8_t* data, uint64_t datalen);
+ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread);
 
 int serial_can_baud(serial_t* s);
 int serial_can_databits(serial_t* s);
@@ -104,5 +108,5 @@ int serial_can_interval_timeout(serial_t* s);
 int serial_can_total_timeout(serial_t* s);
 int serial_binary(serial_t* s);
 int serial_reset_error(serial_t* s);
-int serial_can_ioctl(serial_t *s);
+int serial_can_ioctl(serial_t* s);
 #endif

@@ -107,23 +107,23 @@ void serial_destroy(serial_t* s) {
 }
 
 int serial_write_settings(serial_t* s) {
-    s->options.c_cflag      = s->c_cflag;
-    s->options.c_iflag      = s->c_iflag;
+    s->options.c_cflag = s->c_cflag;
+    s->options.c_iflag = s->c_iflag;
     cfsetispeed(&s->options, s->c_ispeed);
-    s->options.c_lflag      = s->c_lflag;
-    s->options.c_oflag      = s->c_oflag;
+    s->options.c_lflag = s->c_lflag;
+    s->options.c_oflag = s->c_oflag;
     cfsetospeed(&s->options, s->c_ospeed);
-    s->options.c_cc[VEOF]   = s->c_veof;
-    s->options.c_cc[VEOL]   = s->c_veol;
+    s->options.c_cc[VEOF] = s->c_veof;
+    s->options.c_cc[VEOL] = s->c_veol;
     s->options.c_cc[VERASE] = s->c_verase;
-    s->options.c_cc[VINTR]  = s->c_vintr;
-    s->options.c_cc[VKILL]  = s->c_vkill;
-    s->options.c_cc[VQUIT]  = s->c_vquit;
-    s->options.c_cc[VSUSP]  = s->c_vsusp;
+    s->options.c_cc[VINTR] = s->c_vintr;
+    s->options.c_cc[VKILL] = s->c_vkill;
+    s->options.c_cc[VQUIT] = s->c_vquit;
+    s->options.c_cc[VSUSP] = s->c_vsusp;
     s->options.c_cc[VSTART] = s->c_vstart;
-    s->options.c_cc[VSTOP]   = s->c_vstop;
-    s->options.c_cc[VMIN]   = s->c_vmin;
-    s->options.c_cc[VTIME]  = s->c_vtime;
+    s->options.c_cc[VSTOP] = s->c_vstop;
+    s->options.c_cc[VMIN] = s->c_vmin;
+    s->options.c_cc[VTIME] = s->c_vtime;
 
     return tcsetattr(s->fd, TCSANOW, &s->options);
 }
@@ -150,7 +150,7 @@ ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread) {
         ein = rin;
         int nfds = s->fd + 1;
         struct timeval timer = { 0 };
-        timer.tv_usec= s->rconst + (toread * s->rtot);
+        timer.tv_usec = s->rconst + (toread * s->rtot);
         int ready = select(nfds, &rin, NULL, &ein, &timer);
         printf("%d\n", ready);
         if (ready > 0)
@@ -166,28 +166,28 @@ ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread) {
 }
 
 // true/false capabilities (read only)
-int serial_can_baud(serial_t* s)                { (void)s; return 1; }
-int serial_can_databits(serial_t* s)            { (void)s; return 1; }
-int serial_can_stopbits(serial_t* s)            { (void)s; return 1; }
-int serial_can_dtrdsr(serial_t* s)              { (void)s; return 1; }
-int serial_can_handshake(serial_t* s)           { (void)s; return 1; }
-int serial_can_parity_check(serial_t* s)        { (void)s; return 1; }
-int serial_can_parity_config(serial_t* s)       { (void)s; return 1; }
-int serial_can_parity_enable(serial_t* s)       { (void)s; return 1; }
-int serial_can_rlsd(serial_t* s)                { (void)s; return 0; } // currently
-int serial_can_16bitmode(serial_t* s)           { (void)s; return 0; } // Win32 - specific
-int serial_is_rs232(serial_t* s)                { (void)s; return 1; }
-int serial_is_modem(serial_t* s)                { (void)s; return 0; } // Win32 - specific
-int serial_can_rtscts(serial_t* s)              { (void)s; return 1; } // this is a flow option
-int serial_can_xonxoff(serial_t* s)             { (void)s; return 1; } // this is a flow option
-int serial_can_xon_char(serial_t* s)            { (void)s; return 1; } // use stty
-int serial_can_spec_char(serial_t* s)           { (void)s; return 0; } // use stty
-int serial_can_interval_timeout(serial_t* s)    { (void)s; return 0; } // currently
-int serial_can_total_timeout(serial_t* s)       { (void)s; return 1; } // currently
-int serial_binary(serial_t* s)                  { (void)s; return 1; }
-int serial_reset_error(serial_t* s)             { (void)s; return 0; } // for compatibility
+int serial_can_baud(serial_t* s) { (void)s; return 1; }
+int serial_can_databits(serial_t* s) { (void)s; return 1; }
+int serial_can_stopbits(serial_t* s) { (void)s; return 1; }
+int serial_can_dtrdsr(serial_t* s) { (void)s; return 1; }
+int serial_can_handshake(serial_t* s) { (void)s; return 1; }
+int serial_can_parity_check(serial_t* s) { (void)s; return 1; }
+int serial_can_parity_config(serial_t* s) { (void)s; return 1; }
+int serial_can_parity_enable(serial_t* s) { (void)s; return 1; }
+int serial_can_rlsd(serial_t* s) { (void)s; return 0; } // currently
+int serial_can_16bitmode(serial_t* s) { (void)s; return 0; } // Win32 - specific
+int serial_is_rs232(serial_t* s) { (void)s; return 1; }
+int serial_is_modem(serial_t* s) { (void)s; return 0; } // Win32 - specific
+int serial_can_rtscts(serial_t* s) { (void)s; return 1; } // this is a flow option
+int serial_can_xonxoff(serial_t* s) { (void)s; return 1; } // this is a flow option
+int serial_can_xon_char(serial_t* s) { (void)s; return 1; } // use stty
+int serial_can_spec_char(serial_t* s) { (void)s; return 0; } // use stty
+int serial_can_interval_timeout(serial_t* s) { (void)s; return 0; } // currently
+int serial_can_total_timeout(serial_t* s) { (void)s; return 1; } // currently
+int serial_binary(serial_t* s) { (void)s; return 1; }
+int serial_reset_error(serial_t* s) { (void)s; return 0; } // for compatibility
 
-int serial_can_ioctl(serial_t *s) {
+int serial_can_ioctl(serial_t* s) {
     int status;
     ioctl(s->fd, TIOCMGET, &status);
     if ((status & TIOCMBIS) && (status & TIOCMBIC) && (status & TIOCM_RTS) && (status & TIOCM_DTR))
@@ -198,13 +198,94 @@ int serial_can_ioctl(serial_t *s) {
 #endif
 
 #ifdef _WIN32
-serial_t* serial_new(const char* name, uint8_t quiet) { return NULL; }
-void serial_destroy(serial_t* s) {}
+serial_t* serial_new(const char* name, uint8_t quiet) {
+    serial_t* s = malloc(sizeof(serial_t));
+    strncpy_s(s->name, 256, name, 256);
+    s->port = CreateFileA(name, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH, NULL);
+    if (s->port == INVALID_HANDLE_VALUE) {
+        free(s);
+        return NULL;
+    }
 
-int serial_write_settings(serial_t* s) { return 0; }
+    // Flush away any bytes previously read or written.
+    if (!FlushFileBuffers(s->port)) {
+        CloseHandle(s->port);
+        free(s);
+        return NULL;
+    }
 
-ssize_t serial_write(serial_t* s, uint8_t* data, uint64_t datalen) { return 0; }
-ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread) { return 0; }
+    // get original values
+    if (!GetCommTimeouts(s->port, &s->_timeouts)) {
+        CloseHandle(s->port);
+        free(s);
+        return NULL;
+    }
+    if (!GetCommState(s->port, &s->_state)) {
+        CloseHandle(s->port);
+        free(s);
+        return NULL;
+    }
+
+    // copy the original values into "current" value
+    s->timeouts.ReadIntervalTimeout = s->_timeouts.ReadIntervalTimeout;
+    s->timeouts.ReadTotalTimeoutConstant = s->_timeouts.ReadTotalTimeoutConstant;
+    s->timeouts.ReadTotalTimeoutMultiplier = s->_timeouts.ReadTotalTimeoutMultiplier;
+    s->timeouts.WriteTotalTimeoutConstant = s->_timeouts.WriteTotalTimeoutConstant;
+    s->timeouts.WriteTotalTimeoutMultiplier = s->_timeouts.WriteTotalTimeoutMultiplier;
+    s->state.DCBlength = s->_state.DCBlength;
+    s->state.BaudRate = s->_state.BaudRate;
+    s->state.ByteSize = s->_state.ByteSize;
+    s->state.Parity = s->_state.Parity;
+    s->state.StopBits = s->_state.StopBits;
+
+    // we make the change we need
+    s->timeouts.ReadIntervalTimeout = 0;
+    s->timeouts.ReadTotalTimeoutConstant = 1000;
+    s->timeouts.ReadTotalTimeoutMultiplier = 0;
+    s->timeouts.WriteTotalTimeoutConstant = 100;
+    s->timeouts.WriteTotalTimeoutMultiplier = 0;
+    s->state.DCBlength = sizeof(DCB);
+    s->state.BaudRate = 9600;
+    s->state.ByteSize = 8;
+    s->state.Parity = NOPARITY;
+    s->state.StopBits = ONESTOPBIT;
+
+    if (!serial_write_settings(s)) {
+        CloseHandle(s->port);
+        free(s);
+        return NULL;
+    }
+
+    return s;
+}
+
+void serial_destroy(serial_t* s) {
+    CloseHandle(s->port);
+    free(s);
+}
+
+int serial_write_settings(serial_t* s) {
+    if (!SetCommTimeouts(s->port, &s->timeouts)) return 0;
+    if (!SetCommState(s->port, &s->state)) return 0;
+
+    return 1;
+}
+
+ssize_t serial_write(serial_t* s, uint8_t* data, uint64_t datalen) {
+    if (data == NULL) return -1;
+    if (datalen <= 0) return -1;
+    DWORD written;
+    if (!WriteFile(s->port, data, datalen, &written, NULL)) return -1;
+    return written;
+}
+
+ssize_t serial_read(serial_t* s, uint8_t* buf, uint64_t toread) {
+    DWORD received;
+
+    if (!ReadFile(s->port, buf, toread, &received, NULL)) return -1;
+
+    return received;
+}
 
 int serial_can_baud(serial_t* s) { (void)s; return 0; }
 int serial_can_databits(serial_t* s) { (void)s; return 0; }
