@@ -2,10 +2,9 @@
 
 #ifdef __unix__
 
-serial_t* serial_new(const char* name, uint8_t quiet) {
+serial_t* serial_new(const char* name) {
     serial_t* s = malloc(sizeof(serial_t));
     strncpy(s->name, name, 256);
-    (void)quiet; // ignore quiet param
     s->fd = open(name, O_RDWR | O_NOCTTY | O_NONBLOCK);
     if (s->fd == -1) {
         perror("serial_new: Unable to open port - ");
@@ -198,7 +197,7 @@ int serial_can_ioctl(serial_t* s) {
 #endif
 
 #ifdef _WIN32
-serial_t* serial_new(const char* name, uint8_t quiet) {
+serial_t* serial_new(const char* name) {
     serial_t* s = malloc(sizeof(serial_t));
     strncpy_s(s->name, 256, name, 256);
     s->port = CreateFileA(name, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_NO_BUFFERING | FILE_FLAG_WRITE_THROUGH, NULL);

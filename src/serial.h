@@ -80,7 +80,7 @@ typedef long long int ssize_t;
 // https://metacpan.org/dist/Device-SerialPort/source/SerialPort.pm
 // https://www.pololu.com/docs/0J73/15.6
 
-serial_t* serial_new(const char* name, uint8_t quiet);
+serial_t* serial_new(const char* name);
 void serial_destroy(serial_t* s);
 
 int serial_write_settings(serial_t* s);
